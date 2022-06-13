@@ -3,6 +3,7 @@
 English | [简体中文](./README-zh.md)
 最新接口http://39.98.123.211:8416/swagger-ui.html
 最新代理http://gmall-h5-api.atguigu.cn
+![79de41cf4156babe9b2277f095100d1](https://user-images.githubusercontent.com/92567185/173322405-15ce456b-af3a-450e-9223-66b93e475d10.png)
 
 > A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
 
