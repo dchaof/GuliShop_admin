@@ -1,6 +1,8 @@
 # vue-admin-template
 
 English | [简体中文](./README-zh.md)
+最新接口http://39.98.123.211:8416/swagger-ui.html
+最新代理http://gmall-h5-api.atguigu.cn
 
 > A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
 
