@@ -1,6 +1,10 @@
 # vue-admin-template
 
 English | [简体中文](./README-zh.md)
+http://39.98.123.211:8170/swagger-ui.html
+http://39.98.123.211:8170/swagger-ui.html
+
+http://39.98.123.211:8216/swagger-ui.html
 最新接口http://39.98.123.211:8416/swagger-ui.html 最新代理http://gmall-h5-api.atguigu.cn
 79de41cf4156babe9b2277f095100d1.png
 

@@ -60,29 +60,32 @@ export const constantRoutes = [
     redirect: '/product/trademark/list',
     name:'Product',
     meta: { title: '商品管理', icon: 'el-icon-s-shop' },
-    children: [{
+    children: [
+      {
+        path: 'trademark/list',
+        name: 'Trademark',
+        component: () => import('@/views/product/trademark/List'),
+        meta: { title: '品牌管理'}
+      },
+      {
       path: 'attr/list',
       name: 'Attr',
       component: () => import('@/views/product/attr/List'),
       meta: { title: '属性管理'}
     },
+    
+    
     {
-      path: 'treademark/list',
-      name: 'Treademark',
-      component: () => import('@/views/product/treademark/List'),
-      meta: { title: '品牌管理'}
+      path: 'spu/list',
+      name: 'Spu',
+      component: () => import('@/views/product/spu/List'),
+      meta: { title: 'SPU管理'}
     },
     {
       path: 'sku/list',
       name: 'Sku',
       component: () => import('@/views/product/sku/List'),
       meta: { title: 'SKU管理'}
-    },
-    {
-      path: 'spu/list',
-      name: 'Spu',
-      component: () => import('@/views/product/spu/List'),
-      meta: { title: 'SPU管理'}
     },]
   },
 
