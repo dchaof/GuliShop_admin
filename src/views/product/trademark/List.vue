@@ -67,13 +67,14 @@
       <el-input v-model="tmForm.tmName" autocomplete="off"></el-input>
     </el-form-item>
     <el-form-item label="品牌LOGO" label-width="100px">
+      <!-- action 为上传给后台的地址 -->
       <el-upload
         class="avatar-uploader"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        action="/dev-api/admin/product/fileUpload"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload">
-        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
@@ -123,21 +124,30 @@ export default {
       this.limit = size
       this.getTrademarkList()
     },
-    //上传文件  的方法
+    //上传成功将后台传回来的真实地址进行存储
     handleAvatarSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
+        //这个返回的是本地地址
+        // this.imageUrl = URL.createObjectURL(file.raw);
+        //收集图片真实后台地址  有两种方法 分别是 res.data  file. 
+        // this.tmForm.logoUrl = res.data
+        this.tmForm.logoUrl = file.response.data
       },
+      //判断图片的类型和图片的大小
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
+      //判断是否是jpg文件
+      // const isJPG = file.type === 'image/jpeg';
+      const fileArr = ['image/jpeg','image/png','image/gif']
+      const isJpgOrPng = fileArr.indexOf(file.type) !== -1
       const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
+      if (!isJpgOrPng) {
         this.$message.error('上传头像图片只能是 JPG 格式!');
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!');
       }
-      return isJPG && isLt2M;
+      // return isJPG && isLt2M;
+      return isJpgOrPng && isLt2M;
     },
     //展示添加对话框
     showAddDialog(){
