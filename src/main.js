@@ -15,7 +15,7 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 import * as API from '@/api'
-
+import CategorySelector from '@/components/CategorySelector'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -28,7 +28,8 @@ if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
   mockXHR()
 }
-
+//全局注册组件
+Vue.component('CategorySelector',CategorySelector)
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
