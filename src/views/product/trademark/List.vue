@@ -43,7 +43,7 @@
         <template slot-scope="row,$index">
           <div>
             <el-button type="warning" icon="el-icon-edit" size="mini" @click="showUpdateDialog(row)">修改</el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteTrademark(row)">删除</el-button>
           </div>
         </template>
       </el-table-column>
@@ -198,6 +198,37 @@ export default {
       }
       //成功之后
       //失败之后
+    },
+    //删除信息
+    deleteTrademark(row){
+      this.$confirm(`你确定删除${row.row.tmName}吗？`,'提示',{
+        confirmButtonText:'确定',
+        cancelButtonText:'取消',
+        type:'warning'
+      })
+      .then(async ()=>{
+        try {
+          await this.$API.trademark.delete(row.row.id)
+          this.getTrademarkList(this.trademarkList.length>1?this.page : this.page-1)
+          this.$message({
+            type:"success",
+            message:'删除成功'
+          })
+        } catch (error) {
+          this.$message({
+            type:"info",
+            message:'删除失败'
+          })
+        }
+
+        
+      })
+      .catch(()=>{
+        this.$message({
+          type:'info',
+          message:'点击了取消'
+        })
+      })
     }
 
   }
