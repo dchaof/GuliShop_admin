@@ -30,9 +30,11 @@
       <el-table-column
         label="品牌LOGO"
         width="width">
-        <template slot-scope="row,$index">
+        <!-- <template slot-scope="row,$index"> -->
+        <template v-slot:default="scope">
           <!-- 这两个参数名字不可以写错  row代表的是某个品牌的对象  $index代表的是某个品牌的索引下标 -->
-          <img :src="row.logoUrl" alt="" style="width:80px;height:60px">
+          <!-- <img :src="row.logoUrl" alt="" style="width:80px;height:60px"> -->
+          <img :src="scope.row.logoUrl" alt="" style="width:80px;height:60px">
         </template>
       </el-table-column>
       <el-table-column
@@ -83,7 +85,7 @@
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+    <el-button type="primary" @click="addOrUpdate" >确 定</el-button>
   </div>
 </el-dialog>
   </div>
@@ -175,6 +177,27 @@ export default {
       //row里面都是基本数据类型  不谈深拷贝还是浅拷贝
       this.tmForm = {...row.row}      
 
+    },
+    //点击确定修改信息
+    async addOrUpdate(){
+      //获取数据
+      let tmForm = this.tmForm
+      //整理数据
+      //发送请求
+      try {
+        const result = await this.$API.trademark.addOrUpdate(tmForm)
+        this.$message.success(tmForm.id?'修改成功':'添加成功')
+        //获取列表信息
+        
+        this.dialogFormVisible = false
+        this.getTrademarkList(tmForm.id?this.page : 1)
+
+      } catch (error) {
+        this.dialogFormVisible = false
+        this.$message.warning('修改失败')
+      }
+      //成功之后
+      //失败之后
     }
 
   }

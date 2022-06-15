@@ -10,7 +10,7 @@ export default {
         if(trademark.id){
             return request.put('/admin/product/baseTrademark/update',trademark)
         }else{
-            return request.post('/admin/product/baseTrademark/update',trademark)
+            return request.post('/admin/product/baseTrademark/save',trademark)
         }
     },
     //获取
