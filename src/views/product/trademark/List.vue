@@ -40,7 +40,7 @@
         width="width">
         <template slot-scope="row,$index">
           <div>
-            <el-button type="warning" icon="el-icon-edit" size="mini">修改</el-button>
+            <el-button type="warning" icon="el-icon-edit" size="mini" @click="showUpdateDialog(row)">修改</el-button>
             <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
           </div>
         </template>
@@ -61,7 +61,7 @@
 
 
     <!-- 点击添加弹出的对话框 -->
-    <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
+    <el-dialog :title="tmForm.id?'修改品牌':'添加品牌'" :visible.sync="dialogFormVisible">
   <el-form :model="tmForm" style="width:80%">
     <el-form-item label="品牌名称" label-width="100px">
       <el-input v-model="tmForm.tmName" autocomplete="off"></el-input>
@@ -157,7 +157,26 @@ export default {
         tmName:'',
         logoUrl:''
       }
+    },
+    //修改品牌内容
+    showUpdateDialog(row){
+      this.dialogFormVisible = true
+
+      //不可以这样写  如果这样写table中的数据和tmform中的数据就是指向同一个位置
+      //当改变tmForm的时候  table中展示的数据也会被修改
+      //this.tmForm = row.row
+
+
+      //拷贝分为深拷贝和浅拷贝
+      //拷贝 必然会开辟出一个新的地址  也就是将数据存储到不同的地址
+      //浅拷贝  拷贝对象只拷贝的地址  是浅拷贝
+      //深拷贝  不仅拷贝对象的地址还拷贝对象内的值
+
+      //row里面都是基本数据类型  不谈深拷贝还是浅拷贝
+      this.tmForm = {...row.row}      
+
     }
+
   }
 }
 </script>
