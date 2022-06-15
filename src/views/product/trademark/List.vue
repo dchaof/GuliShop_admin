@@ -66,6 +66,7 @@
     <el-form-item label="品牌名称" label-width="100px">
       <el-input v-model="tmForm.tmName" autocomplete="off"></el-input>
     </el-form-item>
+    <!-- 需要添加宽度 不添加下面的文字就会向左偏移 -->
     <el-form-item label="品牌LOGO" label-width="100px">
       <!-- action 为上传给后台的地址 -->
       <el-upload
@@ -149,14 +150,19 @@ export default {
       // return isJPG && isLt2M;
       return isJpgOrPng && isLt2M;
     },
-    //展示添加对话框
+    //展示添加对话框  点击添加需要将 对话框中的内容清空 
     showAddDialog(){
       this.dialogFormVisible = true
+      this.tmForm = {
+        tmName:'',
+        logoUrl:''
+      }
     }
   }
 }
 </script>
 
+// scope需要删除的  不然的话鼠标滑过不会生效
 <style>
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
