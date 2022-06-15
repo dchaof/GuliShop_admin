@@ -64,12 +64,12 @@
 
     <!-- 点击添加弹出的对话框 -->
     <el-dialog :title="tmForm.id?'修改品牌':'添加品牌'" :visible.sync="dialogFormVisible">
-  <el-form :model="tmForm" style="width:80%">
-    <el-form-item label="品牌名称" label-width="100px">
-      <el-input v-model="tmForm.tmName" autocomplete="off"></el-input>
+  <el-form :model="tmForm" style="width:80%" :rules="rules" ref="tmForm">
+    <el-form-item label="品牌名称" label-width="100px" prop="tmName" >
+      <el-input v-model="tmForm.tmName" autocomplete="off" ></el-input>
     </el-form-item>
     <!-- 需要添加宽度 不添加下面的文字就会向左偏移 -->
-    <el-form-item label="品牌LOGO" label-width="100px">
+    <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
       <!-- action 为上传给后台的地址 -->
       <el-upload
         class="avatar-uploader"
@@ -95,6 +95,18 @@
 export default {
   name: 'Trademark',
   data(){
+    //自定义校验规则
+    var validateTmName = (rule, value, callback) => {
+      if (value.length < 2 || value.length > 10) {
+        //value是校验的数据
+        //callback是校验成功或失败的回调
+        //如果传递了一个错误的对象，就代表校验失败
+        //如果没有传递任何参数就是成功了
+        callback(new Error('长度在 2 到 10 个字符'));
+      }else{
+        callback()
+      }
+    }
     return {
       page:1,
       limit:3,
@@ -105,8 +117,25 @@ export default {
         tmName:'',
         logoUrl:''
       },
-      imageUrl: ''
+      imageUrl: '',
+      rules: {
+        /* 
+        这个对象代表的是表单验证规则的对象
+        每个字段就是一个数组  数组里面放的就是我们校验规则的对象  几个规则就是几个对象
+        每个规则对象都可以规定 规则名称  消息名称  和触发时机
+        触发时机有三种 失去焦点  输入框发生改变 和 整体校验
+        */
+        tmName: [
 
+          { required: true, message: '请输入品牌名字', trigger: 'blur' },
+          // { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'change' }
+          { required: true , trigger: 'change' ,validator:validateTmName}
+        ],
+        //写什么都无所谓  upload触发时机必须是整体校验才会触发
+        logoUrl: [
+          { required: true, message: '请上传品牌LOGO', trigger: 'change' }
+        ]
+      }
     }
   },
   mounted(){
@@ -179,25 +208,35 @@ export default {
 
     },
     //点击确定修改信息
-    async addOrUpdate(){
-      //获取数据
-      let tmForm = this.tmForm
-      //整理数据
-      //发送请求
-      try {
-        const result = await this.$API.trademark.addOrUpdate(tmForm)
-        this.$message.success(tmForm.id?'修改成功':'添加成功')
-        //获取列表信息
-        
-        this.dialogFormVisible = false
-        this.getTrademarkList(tmForm.id?this.page : 1)
+    addOrUpdate(){
+      //整体校验
+      this.$refs.tmForm.validate(async (valid) => {
+          //校验通过
+          if (valid) {
+                //获取数据
+          let tmForm = this.tmForm
+          //整理数据
+          //发送请求
+          try {
+            const result = await this.$API.trademark.addOrUpdate(tmForm)
+            this.$message.success(tmForm.id?'修改成功':'添加成功')
+            //获取列表信息
+            
+            this.dialogFormVisible = false
+            this.getTrademarkList(tmForm.id?this.page : 1)
 
-      } catch (error) {
-        this.dialogFormVisible = false
-        this.$message.warning('修改失败')
-      }
-      //成功之后
-      //失败之后
+          } catch (error) {
+            this.dialogFormVisible = false
+            this.$message.warning('修改失败')
+          }
+          //成功之后
+          //失败之后
+          } else {
+            console.log('校验失败不提交')
+            return false
+          }
+        });
+      
     },
     //删除信息
     deleteTrademark(row){
