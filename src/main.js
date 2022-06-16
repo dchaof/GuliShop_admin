@@ -16,6 +16,7 @@ import '@/icons' // icon
 import '@/permission' // permission control
 import * as API from '@/api'
 import CategorySelector from '@/components/CategorySelector'
+import HintButton from '@/components/HintButton'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -30,6 +31,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 //全局注册组件
 Vue.component('CategorySelector',CategorySelector)
+Vue.component('HintButton',HintButton)
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
