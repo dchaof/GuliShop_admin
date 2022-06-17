@@ -74,7 +74,13 @@
             label="操作"
             width="width">
             <template slot-scope="{row,$index}">
-              <HintButton type="danger" icon="el-icon-delete" size="mini" title="删除"></HintButton>
+              <el-popconfirm
+                :title="'确认删除'+row.valueName+'吗？'"
+                @onConfirm="attrForm.attrValueList.splice($index,1)"
+              >
+                <HintButton slot="reference" type="danger" icon="el-icon-delete" size="mini" title="删除" ></HintButton>
+              </el-popconfirm>
+              
             </template>
           </el-table-column>
         </el-table>
@@ -171,11 +177,11 @@ export default {
       }
       let isRepeat = this.attrForm.attrValueList.some(item =>{
         if(item !== row){
-          this.$message.info('这个属性值已经存在了')
           return item.valueName === valueName.trim()
         }
       })
       if(isRepeat){
+        this.$message.info('这个属性值已经存在了')
         return 
       }
       row.isEdit = false
