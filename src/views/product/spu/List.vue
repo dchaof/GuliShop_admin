@@ -4,8 +4,8 @@
       <CategorySelector @ChangeCategory="changeCategory" :isShowList="isShowList"></CategorySelector>
     </el-card>
     <el-card style="margin-top:20px">
-      <div v-if="isShowList">
-        <el-button type="primary" icon="el-icon-plus" >添加SPU</el-button>
+      <div  v-if="!isShowSkuList && !isShowSpuList">
+        <el-button type="primary" icon="el-icon-plus" @click="showAddSpuForm">添加SPU</el-button>
         <el-table
           :data="spuList"
           border
@@ -31,8 +31,8 @@
             label="操作"
             width="width">
             <template slot-scope="{row,$index}">
-              <HintButton  type="success" icon="el-icon-plus" size="mini" title="添加SKU" ></HintButton>
-              <HintButton  type="warning" icon="el-icon-edit" size="mini"  title="修改SPU"></HintButton>
+              <HintButton  type="success" icon="el-icon-plus" size="mini" title="添加SKU" @click="showAddSkuForm"></HintButton>
+              <HintButton  type="warning" icon="el-icon-edit" size="mini"  title="修改SPU" @click="showUpdateSpuForm(row)"></HintButton>
               <HintButton  type="info" icon="el-icon-info" size="mini" title="查看SKU列表" ></HintButton>
               <HintButton  type="danger" icon="el-icon-delete" size="mini"  title="删除SPU"></HintButton>
             </template>
@@ -50,26 +50,33 @@
           :total="total">
         </el-pagination>
       </div>
-      <div v-if="!isShowList">
-        
-      </div>
+      <skuForm v-if="isShowSkuList"></skuForm>
+      <spuForm v-if="isShowSpuList"></spuForm>
     </el-card>
   </div>
 </template>
 
 <script>
+import skuForm from '@/views/product/attr/components/skuForm'
+import spuForm from '@/views/product/attr/components/spuForm'
 export default {
   name: 'attr',
+  components:{
+    skuForm,
+    spuForm
+  },
   data(){
     return {
       category1Id:'',
       category2Id:'',
       category3Id:'',
-      isShowList:true,
+      isShowList:true,//只用于三级联动的下拉列表能否操作
       page:1,
       limit:2,
       spuList:[],
-      total:0
+      total:0,
+      isShowSkuList:false,
+      isShowSpuList:false
     }
   },
   methods:{
@@ -102,6 +109,15 @@ export default {
     handleSizeChange(size){
       this.limit = size
       this.getSpuList()
+    },
+    showAddSpuForm(){
+      this.isShowSpuList = true
+    },
+    showUpdateSpuForm(row){
+      this.isShowSpuList = true
+    },
+    showAddSkuForm(){
+      this.isShowSkuList = true
     }
   }
 }
