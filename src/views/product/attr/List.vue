@@ -30,12 +30,17 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="address"
+          
           label="操作"
           width="150">
           <template slot-scope="{row,$index}">
               <HintButton type="warning" icon="el-icon-edit" size="mini" title="修改" @click="updateAttrValue(row)"></HintButton>
-              <HintButton type="danger" icon="el-icon-delete" size="mini" title="删除"></HintButton>
+              <el-popconfirm
+                :title="`你确定删除${row.attrName}吗？`" @onConfirm="deleteAttr(row)"
+              >
+                <HintButton type="danger" icon="el-icon-delete" size="mini" title="删除" slot="reference" ></HintButton>
+              </el-popconfirm>
+              
           </template>
         </el-table-column>
       </el-table>
@@ -84,7 +89,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary" >保存</el-button>
+        <el-button type="primary" @click="save" :disabled="attrForm.attrValueList.length === 0">保存</el-button>
         <el-button @click="isShowList = true">取消</el-button>
 
       </div>
@@ -143,7 +148,8 @@ export default {
       this.attrForm = {
         attrName : '',
         attrValueList : [],
-        categoryId : this.category3Id
+        categoryId : this.category3Id,
+        categoryLevel:3
       }
 
     },
@@ -203,6 +209,41 @@ export default {
         //$nextTick  是最近一次页面更新完执行的回调  只执行一次
         //updated   只要页面发生更新就会执行一次
       })
+    },
+    async save(){
+      let attr  = this.attrForm
+      //对数组进行遍历  让属性值名称不为空串‘’ 的删除edit属性     为空串的直接删除这个对象
+       attr.attrValueList = attr.attrValueList.filter(item =>{
+        if(item.valueName !== ''){
+          delete item.isEdit
+          return true
+        }
+      })
+      //判断新数组的长度  如果是0 就不发送请求
+      if(attr.attrValueList.length === 0){
+        return 
+      }
+      //发送请求
+      try {
+        await this.$API.attr.addOrUpdate(attr)
+        this.$message.success('保存成功')
+        //跳转到页面展示区域
+        this.isShowList = true
+        //重新获取数据列表
+        this.getAttrList()
+      } catch (error) {
+        this.$message.info('保存失败')
+      }
+
+    },
+    async deleteAttr(row){
+      try {
+        await this.$API.attr.delete(row.id)
+        this.$message.success('删除成功')
+        this.getAttrList()
+      } catch (error) {
+        this.$message.info('删除失败')
+      }
     }
   }
 }
