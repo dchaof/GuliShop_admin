@@ -60,5 +60,16 @@ export default {
       url: `/admin/product/findSpuInfoByKeyword/${keyword}`,
       method: 'get'
     })
+  },
+
+  //获取图片列表数据
+  getSpuImageList(spuId){
+    return request.get(`/admin/product/spuImageList/${spuId}`)
+  },
+  //获取所有品牌列表数据
+  getTrademarkList(){
+    return request.get('/admin/product/baseTrademark/getTrademarkList')
   }
+
+
 }

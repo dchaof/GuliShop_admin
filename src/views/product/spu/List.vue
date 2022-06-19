@@ -4,8 +4,8 @@
       <CategorySelector @ChangeCategory="changeCategory" :isShowList="isShowList"></CategorySelector>
     </el-card>
     <el-card style="margin-top:20px">
-      <div  v-if="!isShowSkuList && !isShowSpuList">
-        <el-button type="primary" icon="el-icon-plus" @click="showAddSpuForm">添加SPU</el-button>
+      <div  v-show="!isShowSkuList && !isShowSpuList">
+        <el-button type="primary" icon="el-icon-plus" @click="showAddSpuForm()" >添加SPU</el-button>
         <el-table
           :data="spuList"
           border
@@ -50,15 +50,15 @@
           :total="total">
         </el-pagination>
       </div>
-      <skuForm v-if="isShowSkuList"></skuForm>
-      <spuForm v-if="isShowSpuList"></spuForm>
+      <skuForm v-show="isShowSkuList"></skuForm>
+      <spuForm v-show="isShowSpuList" ref="spu"></spuForm>
     </el-card>
   </div>
 </template>
 
 <script>
-import skuForm from '@/views/product/attr/components/skuForm'
-import spuForm from '@/views/product/attr/components/spuForm'
+import skuForm from '@/views/product/components/skuForm'
+import spuForm from '@/views/product/components/spuForm'
 export default {
   name: 'attr',
   components:{
@@ -112,9 +112,12 @@ export default {
     },
     showAddSpuForm(){
       this.isShowSpuList = true
+      //再使用ref获取元素的时候 标签中不能用vif否则为undefined
+      this.$refs.spu.initAddSpuFormData()
     },
     showUpdateSpuForm(row){
       this.isShowSpuList = true
+      this.$refs.spu.initUpdateSpuFormData()
     },
     showAddSkuForm(){
       this.isShowSkuList = true
