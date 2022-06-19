@@ -7,8 +7,9 @@
       <el-form-item label="品牌">
          <el-select v-model="spuInfo.tmId" placeholder="请选择品牌">
           <el-option
-            label="label"
-            value="value">
+            :label="tm.tmName"
+            :value="tm.id"
+            v-for="(tm, index) in trademarkList" :key="tm.id">
           </el-option>
         </el-select>
       </el-form-item>
@@ -20,7 +21,8 @@
           action="https://jsonplaceholder.typicode.com/posts/"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove">
+          :on-remove="handleRemove"
+          :file-list="spuImageList">
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
@@ -111,7 +113,12 @@ export default {
       //获取spu图片列表数据
       let imgResult = await this.$API.spu.getSpuImageList(spu.id)
       if(imgResult.code === 200){
-        this.spuImageList = imgResult.data
+        let spuImageList = imgResult.data
+        spuImageList.forEach(item => {
+          item.name = item.imgName
+          item.url = item.imgUrl
+        });
+        this.spuImageList = spuImageList
       }
 
       //获取所有品牌列表数据
