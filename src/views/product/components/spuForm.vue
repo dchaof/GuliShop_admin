@@ -58,7 +58,7 @@
           </el-table-column>
         </el-table>
         <el-button type="primary">保存</el-button>
-        <el-button >取消</el-button>
+        <el-button @click="$emit('update:visible',false)">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -100,12 +100,47 @@ export default {
       this.dialogVisible = true;
     },
     //修改spu
-    initUpdateSpuFormData(spu){
+    async initUpdateSpuFormData(spu){
+      console.log(spu)
+      //获取spu详情
+      let result = await this.$API.spu.get(spu.id)
+      if(result.code === 200){
+        this.spuInfo = result.data
+      }
 
+      //获取spu图片列表数据
+      let imgResult = await this.$API.spu.getSpuImageList(spu.id)
+      if(imgResult.code === 200){
+        this.spuImageList = imgResult.data
+      }
+
+      //获取所有品牌列表数据
+      let trademarkResult = await this.$API.spu.getTrademarkList()
+      if(trademarkResult.code === 200){
+        this.trademarkList = trademarkResult.data
+      }
+
+
+      //获取所有的销售属性数据
+      let baseSaleAttrResult = await this.$API.spu.getSaleAttrList()
+      if(baseSaleAttrResult.code === 200){
+        this.saleAttrList = baseSaleAttrResult.data
+      }
     },
     //添加spu
-    initAddSpuFormData(){
+    async initAddSpuFormData(){
+      //获取所有品牌列表数据
+      let trademarkResult = await this.$API.spu.getTrademarkList()
+      if(trademarkResult.code === 200){
+        this.trademarkList = trademarkResult.data
+      }
 
+
+      //获取所有的销售属性数据
+      let baseSaleAttrResult = await this.$API.spu.getSaleAttrList()
+      if(baseSaleAttrResult.code === 200){
+        this.saleAttrList = baseSaleAttrResult.data
+      }
     }
   },
 

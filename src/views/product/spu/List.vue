@@ -16,7 +16,7 @@
             align="center"
             type="index">
           </el-table-column>
-          <el-table-column
+          <el-table-column 
             prop="spuName"
             label="SPU名称"
             width="width">
@@ -51,7 +51,9 @@
         </el-pagination>
       </div>
       <skuForm v-show="isShowSkuList"></skuForm>
-      <spuForm v-show="isShowSpuList" ref="spu"></spuForm>
+      <!-- visible父子数据同步 -->
+      <!-- <spuForm v-show="isShowSpuList" ref="spu" :visible.sync="isShowSpuList" ></spuForm> -->
+      <spuForm v-show="isShowSpuList" ref="spu" :visible="isShowSpuList" @update:visible="isShowSpuList = $event"></spuForm>
     </el-card>
   </div>
 </template>
@@ -117,7 +119,7 @@ export default {
     },
     showUpdateSpuForm(row){
       this.isShowSpuList = true
-      this.$refs.spu.initUpdateSpuFormData()
+      this.$refs.spu.initUpdateSpuFormData(row)
     },
     showAddSkuForm(){
       this.isShowSkuList = true
