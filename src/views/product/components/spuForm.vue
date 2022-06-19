@@ -18,10 +18,11 @@
       </el-form-item>
       <el-form-item label="SPU图片">
         <el-upload
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="/dev-api/admin/product/fileUpload"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
+          :on-success="handleSuccess"
           :file-list="spuImageList">
           <i class="el-icon-plus"></i>
         </el-upload>
@@ -30,14 +31,17 @@
         </el-dialog>
       </el-form-item>
       <el-form-item label="销售属性">
-        <el-select v-model="spuInfo.spuSaleAttrId" placeholder="请选择类型">
+        <!-- --------------------------------------------------------------------- -->
+        <el-select v-model="spuSaleAttrId" :placeholder="unUsedSpuSaleAttrList.length > 0 ? `还剩${unUsedSpuSaleAttrList.length}个属性` : '没有了'">
           <el-option
-            label="label"
-            value="value">
+            v-for="(unUsedSpuSaleAttr, index) in unUsedSpuSaleAttrList" :key="unUsedSpuSaleAttr.id"
+            :label="unUsedSpuSaleAttr.name"
+            :value="unUsedSpuSaleAttr.id">
           </el-option>
         </el-select>
         <el-button type="primary" icon="el-icon-plus" >添加销售属性</el-button>
         <el-table
+          :data="spuInfo.spuSaleAttrList"
           border
           style="width:100%; margin:20px 0">
           <el-table-column
@@ -47,16 +51,44 @@
             align="center">
           </el-table-column>
           <el-table-column
+            prop="saleAttrName"
             label="属性名"
             width="150">
           </el-table-column>
           <el-table-column
             label="属性值名称列表"
             width="width">
+            <template slot-scope="{row,$index}">
+              <el-tag
+                v-for="(spuSaleAttrValue, index) in row.spuSaleAttrValueList" :key="spuSaleAttrValue.id" 
+                closable
+                :disable-transitions="false">
+                {{spuSaleAttrValue.saleAttrValueName}}
+              </el-tag>
+              <!-- inputVisible挂在属性上  每个属性只有一个   之前我们在平台属性中是直接添加在属性值当中   因为现在我们每个属性值身上不能有编辑模式和查看模式 -->
+              <!-- row.inputValue是在输入框中输入的内容收集到哪里   我们先把收集的数据存储到当前属性当中  后面失去焦点或者回车 直接去属性身上去拿-->
+
+              <!-- @keyup.enter.native="handleInputConfirm"
+                @blur="handleInputConfirm" -->
+              <el-input
+                class="input-new-tag"
+                v-if="row.inputVisible"
+                v-model="row.inputValue"
+                ref="saveTagInput"
+                size="small"
+                
+              >
+              </el-input>
+              <!-- @click="showInput" -->
+              <el-button v-else class="button-new-tag" size="small" >添加</el-button>
+            </template>
           </el-table-column>
           <el-table-column
             label="操作"
             width="150">
+            <template>
+              <HintButton type="danger" icon="el-icon-delete" size="mini" title="删除"></HintButton> 
+            </template>
           </el-table-column>
         </el-table>
         <el-button type="primary">保存</el-button>
@@ -93,13 +125,27 @@ export default {
       spuSaleAttrId:''
     }
   },
+  computed:{
+    unUsedSpuSaleAttrList(){
+      return this.saleAttrList.filter(saleAttr=>{
+        return this.spuInfo.spuSaleAttrList.every(spuSaleAttr=>{
+          return saleAttr.name !== spuSaleAttr.saleAttrName
+        })
+      })
+    }
+  },
   methods: {
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      
+      this.spuImageList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    handleSuccess(response,file, fileList){
+      
+      this.spuImageList = fileList
     },
     //修改spu
     async initUpdateSpuFormData(spu){
@@ -154,6 +200,20 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-
+<style>
+  .el-tag + .el-tag {
+    margin-left: 10px;
+  }
+  .button-new-tag {
+    margin-left: 10px;
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-new-tag {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
+  }
 </style>
