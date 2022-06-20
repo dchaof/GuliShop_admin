@@ -32,14 +32,14 @@
       </el-form-item>
       <el-form-item label="销售属性">
         <!-- --------------------------------------------------------------------- -->
-        <el-select v-model="spuSaleAttrId" :placeholder="unUsedSpuSaleAttrList.length > 0 ? `还剩${unUsedSpuSaleAttrList.length}个属性` : '没有了'">
+        <el-select v-model="spuSaleAttrIdName" :placeholder="unUsedSpuSaleAttrList.length > 0 ? `还剩${unUsedSpuSaleAttrList.length}个属性` : '没有了'">
           <el-option
             v-for="(unUsedSpuSaleAttr, index) in unUsedSpuSaleAttrList" :key="unUsedSpuSaleAttr.id"
             :label="unUsedSpuSaleAttr.name"
-            :value="unUsedSpuSaleAttr.id">
+            :value="`${unUsedSpuSaleAttr.id}:${unUsedSpuSaleAttr.name}`">
           </el-option>
         </el-select>
-        <el-button type="primary" icon="el-icon-plus" >添加销售属性</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="addSaleAttr" :disabled="!spuSaleAttrIdName">添加销售属性</el-button>
         <el-table
           :data="spuInfo.spuSaleAttrList"
           border
@@ -120,9 +120,9 @@ export default {
       spuImageList: [], // SPU图片列表
       trademarkList: [], // 品牌列表
       saleAttrList: [], // 销售属性列表
-      attrIdAttrName: '', // 用来收集销售属性id与name   id:name
+      attrIdAttrName: '', 
       loading: false,
-      spuSaleAttrId:''
+      spuSaleAttrIdName:''// 用来收集销售属性id与name   id:name
     }
   },
   computed:{
@@ -194,6 +194,18 @@ export default {
       if(baseSaleAttrResult.code === 200){
         this.saleAttrList = baseSaleAttrResult.data
       }
+    },
+    //添加销售属性
+    addSaleAttr(){
+      
+      let [baseSaleAttrId,saleAttrName] = this.spuSaleAttrIdName.split(':')
+      let obj = {
+        baseSaleAttrId,
+        saleAttrName
+      }
+      this.spuInfo.spuSaleAttrList.push(obj)
+      this.spuSaleAttrIdName = ''
+
     }
   },
 
