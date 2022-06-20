@@ -33,7 +33,7 @@
             <template slot-scope="{row,$index}">
               <HintButton  type="success" icon="el-icon-plus" size="mini" title="添加SKU" @click="showAddSkuForm"></HintButton>
               <HintButton  type="warning" icon="el-icon-edit" size="mini"  title="修改SPU" @click="showUpdateSpuForm(row)"></HintButton>
-              <HintButton  type="info" icon="el-icon-info" size="mini" title="查看SKU列表" ></HintButton>
+              <HintButton  type="info" icon="el-icon-info" size="mini" title="查看SKU列表"></HintButton>
               <HintButton  type="danger" icon="el-icon-delete" size="mini"  title="删除SPU"></HintButton>
             </template>
           </el-table-column>

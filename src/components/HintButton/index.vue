@@ -1,7 +1,10 @@
 <template>
-  <el-tooltip  :content="title" placement="top">
+  <a  href="javascript:;" :content="title" >
     <el-button v-bind="$attrs" v-on="$listeners"></el-button>
-  </el-tooltip>
+  </a>
+  <!-- <el-tooltip  :content="title" placement="top">
+    <el-button v-bind="$attrs" v-on="$listeners"></el-button>
+  </el-tooltip> -->
 </template>
 
 <script>
@@ -11,6 +14,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-
+<style>
+  a {
+    margin: 0 20px;
+  }
 </style>

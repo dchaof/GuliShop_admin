@@ -62,7 +62,8 @@
               <el-tag
                 v-for="(spuSaleAttrValue, index) in row.spuSaleAttrValueList" :key="spuSaleAttrValue.id" 
                 closable
-                :disable-transitions="false">
+                :disable-transitions="false"
+                @close="row.spuSaleAttrValueList.splice(index,1)">
                 {{spuSaleAttrValue.saleAttrValueName}}
               </el-tag>
               <!-- inputVisible挂在属性上  每个属性只有一个   之前我们在平台属性中是直接添加在属性值当中   因为现在我们每个属性值身上不能有编辑模式和查看模式 -->
@@ -86,8 +87,8 @@
           <el-table-column
             label="操作"
             width="150">
-            <template>
-              <HintButton type="danger" icon="el-icon-delete" size="mini" title="删除"></HintButton> 
+            <template slot-scope="{row,$index}">
+              <HintButton type="danger" icon="el-icon-delete" size="mini" title="删除" @click="spuInfo.spuSaleAttrList.splice($index,1)"></HintButton> 
             </template>
           </el-table-column>
         </el-table>
