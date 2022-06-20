@@ -68,19 +68,19 @@
               <!-- inputVisible挂在属性上  每个属性只有一个   之前我们在平台属性中是直接添加在属性值当中   因为现在我们每个属性值身上不能有编辑模式和查看模式 -->
               <!-- row.inputValue是在输入框中输入的内容收集到哪里   我们先把收集的数据存储到当前属性当中  后面失去焦点或者回车 直接去属性身上去拿-->
 
-              <!-- @keyup.enter.native="handleInputConfirm"
-                @blur="handleInputConfirm" -->
+              <!--  -->
               <el-input
                 class="input-new-tag"
                 v-if="row.inputVisible"
                 v-model="row.inputValue"
                 ref="saveTagInput"
                 size="small"
-                
+                @keyup.enter.native="handleInputConfirm(row)"
+                @blur="handleInputConfirm(row)"
               >
               </el-input>
-              <!-- @click="showInput" -->
-              <el-button v-else class="button-new-tag" size="small" >添加</el-button>
+              <!--  -->
+              <el-button v-else class="button-new-tag" size="small" @click="showInput(row)">添加</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -201,12 +201,51 @@ export default {
       let [baseSaleAttrId,saleAttrName] = this.spuSaleAttrIdName.split(':')
       let obj = {
         baseSaleAttrId,
-        saleAttrName
+        saleAttrName,
+        spuSaleAttrValueList: []
       }
       this.spuInfo.spuSaleAttrList.push(obj)
       this.spuSaleAttrIdName = ''
 
-    }
+    },
+    //点击添加 变为输入框和自动获取焦点
+    showInput(row){
+      //设置响应式属性
+      this.$set(row,'inputVisible',true)
+      //自动获取焦点
+      this.$nextTick(() => {
+        this.$refs.saveTagInput.focus()
+      })
+    },
+    //焦点移出或者回车 的回调
+    handleInputConfirm(row){
+      let saleAttrValueName = row.inputValue
+      
+      if(saleAttrValueName.trim() === ''){
+        row.inputValue = ''
+        return 
+      }
+      let isRepeat = row.spuSaleAttrValueList.some(item =>{
+        item.saleAttrValueName === saleAttrValueName
+      })
+      if(isRepeat) {
+        this.$message.info('输入属性值名称不能重复')
+        row.inputValue = ''
+        return 
+      }
+
+      //变成想要的数据结构
+      let obj = {
+        saleAttrValueName
+      }
+      //添加到属性值列表中
+      //点击添加 一直添加两个属性值  ？？？？？？？？？？？？
+      row.spuSaleAttrValueList.push(obj)
+      //input内容清空
+      row.inputValue = ''
+      //关闭input框变成按钮
+      row.inputVisible = false
+    },
   },
 
 }

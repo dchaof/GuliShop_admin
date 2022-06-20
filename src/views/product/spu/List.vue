@@ -53,6 +53,8 @@
       <skuForm v-show="isShowSkuList"></skuForm>
       <!-- visible父子数据同步 -->
       <!-- <spuForm v-show="isShowSpuList" ref="spu" :visible.sync="isShowSpuList" ></spuForm> -->
+
+
       <spuForm v-show="isShowSpuList" ref="spu" :visible="isShowSpuList" @update:visible="isShowSpuList = $event"></spuForm>
     </el-card>
   </div>
