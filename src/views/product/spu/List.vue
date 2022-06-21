@@ -34,7 +34,14 @@
               <HintButton  type="success" icon="el-icon-plus" size="mini" title="添加SKU" @click="showAddSkuForm"></HintButton>
               <HintButton  type="warning" icon="el-icon-edit" size="mini"  title="修改SPU" @click="showUpdateSpuForm(row)"></HintButton>
               <HintButton  type="info" icon="el-icon-info" size="mini" title="查看SKU列表"></HintButton>
-              <HintButton  type="danger" icon="el-icon-delete" size="mini"  title="删除SPU"></HintButton>
+
+              <el-popconfirm
+                :title="`你确定删除${row.spuName}吗？`"
+                @onConfirm="deleteSpu(row)"
+              >
+                <HintButton slot="reference"  type="danger" icon="el-icon-delete" size="mini"  title="删除SPU"></HintButton>
+              </el-popconfirm>
+              
             </template>
           </el-table-column>
         </el-table>
@@ -55,7 +62,7 @@
       <!-- <spuForm v-show="isShowSpuList" ref="spu" :visible.sync="isShowSpuList" ></spuForm> -->
 
 
-      <spuForm v-show="isShowSpuList" ref="spu" :visible="isShowSpuList" @update:visible="isShowSpuList = $event"></spuForm>
+      <spuForm v-show="isShowSpuList" ref="spu" :visible="isShowSpuList" @update:visible="isShowSpuList = $event" @successBack='successBack' @cancelBack="cancelBack"></spuForm>
     </el-card>
   </div>
 </template>
@@ -117,14 +124,39 @@ export default {
     showAddSpuForm(){
       this.isShowSpuList = true
       //再使用ref获取元素的时候 标签中不能用vif否则为undefined
-      this.$refs.spu.initAddSpuFormData()
+      this.$refs.spu.initAddSpuFormData(this.category3Id)
     },
     showUpdateSpuForm(row){
+      //用于标识修改模式
+      this.flag = row.id
       this.isShowSpuList = true
       this.$refs.spu.initUpdateSpuFormData(row)
     },
     showAddSkuForm(){
       this.isShowSkuList = true
+    },
+    successBack(){
+      if(this.flag){
+        this.getSpuList(this.page)
+      }else{
+        this.getSpuList()
+      }
+      //清除标识
+      this.flag = null
+    },
+    cancelBack(){
+      this.flag = null
+    },
+
+    //删除spu信息
+    async deleteSpu(row){
+      try {
+        await this.$API.spu.remove(row.id)
+        this.$message.success('删除成功')
+        this.getSpuList(this.spuList.length > 1 ? this.page : this.page - 1)
+      } catch (error) {
+        this.$$message.info('删除失败')
+      }
     }
   }
 }

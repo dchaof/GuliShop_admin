@@ -1,8 +1,10 @@
 <template>
-  <div>sku</div>
+  <div>
+    sku
+  </div>
 </template>
 
-<script>
+<script> 
 export default {
   name: 'attr',
 }

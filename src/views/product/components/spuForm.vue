@@ -92,8 +92,8 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary">保存</el-button>
-        <el-button @click="$emit('update:visible',false)">取消</el-button>
+        <el-button type="primary" @click="save">保存</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -121,7 +121,7 @@ export default {
       spuImageList: [], // SPU图片列表
       trademarkList: [], // 品牌列表
       saleAttrList: [], // 销售属性列表
-      attrIdAttrName: '', 
+      
       loading: false,
       spuSaleAttrIdName:''// 用来收集销售属性id与name   id:name
     }
@@ -150,6 +150,7 @@ export default {
     },
     //修改spu
     async initUpdateSpuFormData(spu){
+      this.category3Id = spu.category3Id
       console.log(spu)
       //获取spu详情
       let result = await this.$API.spu.get(spu.id)
@@ -182,7 +183,8 @@ export default {
       }
     },
     //添加spu
-    async initAddSpuFormData(){
+    async initAddSpuFormData(category3Id){
+      this.category3Id = category3Id
       //获取所有品牌列表数据
       let trademarkResult = await this.$API.spu.getTrademarkList()
       if(trademarkResult.code === 200){
@@ -221,6 +223,7 @@ export default {
     //焦点移出或者回车 的回调
     handleInputConfirm(row){
       let saleAttrValueName = row.inputValue
+      let baseSaleAttrId = row.baseSaleAttrId
       
       if(saleAttrValueName.trim() === ''){
         row.inputValue = ''
@@ -237,16 +240,88 @@ export default {
 
       //变成想要的数据结构
       let obj = {
-        saleAttrValueName
+        saleAttrValueName,
+        baseSaleAttrId
       }
       //添加到属性值列表中
-      //点击添加 一直添加两个属性值  ？？？？？？？？？？？？
+    
       row.spuSaleAttrValueList.push(obj)
       //input内容清空
       row.inputValue = ''
       //关闭input框变成按钮
       row.inputVisible = false
     },
+    //保存
+    async save(){
+      //获取收集的参数数据
+      let {spuInfo,spuImageList,category3Id} = this
+      //整理参数
+      spuInfo.spuImageList = spuImageList.map(item => 
+        ({
+          imgName:item.name,
+          imgUrl:item.imgUrl||item.response.data,
+          
+        })
+      )
+      //整理收集category3Id
+      spuInfo.category3Id = category3Id
+
+
+      //删除当前属性中的
+      spuInfo.spuSaleAttrList.forEach(item =>{
+        delete item.inputVisible
+        delete item.inputValue
+      })
+
+      //发送请求
+      try {
+        let result = await this.$API.spu.addUpdate(spuInfo)
+        this.$message.success('保存成功')
+        //返回列表页
+        this.$emit('update:visible',false)
+        //通知父组件成功返回  做一些事情
+        this.$emit('successBack')
+        //清空data数据
+        this.resetData()
+
+      } catch (error) {
+        this.$message.info('保存失败')
+      }
+
+    },
+
+    //清空data中的数据
+    resetData(){
+      this.dialogImageUrl= '', // 大图的url
+      this.dialogVisible= false, // 标识大图dilaog是否显示
+
+      this.spuId= '', // SPU ID
+      this.spuInfo= { // SPU详情信息对象
+        category3Id: null, // 3级分类ID
+        spuName: '', // spu名称
+        description: '', // spu描述
+        tmId: null, // spu的品牌id
+        spuSaleAttrList: [], // spu的销售属性列表
+        spuImageList: [], // spu图片列表
+
+      }, 
+      this.spuImageList= [], // SPU图片列表
+      this.trademarkList= [], // 品牌列表
+      this.saleAttrList= [], // 销售属性列表
+      
+      this.loading= false,
+      this.spuSaleAttrIdName=''// 用来收集销售属性id与name   id:name
+    },
+
+    //点击取消
+    cancel(){
+      //1. 得返回到父组件
+      this.$emit('update:visible',false)
+      //通知父组件 清空标识数据
+      this.$emit('cancelBack')
+      //清空数据
+      this.resetData()
+    }
   },
 
 }
