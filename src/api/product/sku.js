@@ -1,6 +1,12 @@
 import request from '@/utils/request'
 
 export default {
+
+
+  //根据三级分类获取平台属性列表
+  getAttrList(category1Id,category2Id,category3Id){
+    return request.get(`/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`)
+  },
     /* 
   下架SKU
   GET /admin/product/cancelSale/{skuId}
@@ -73,4 +79,6 @@ export default {
   getSpuSaleAttrList (spuId) {
     return request.get(`/admin/product/spuSaleAttrList/${spuId}`)
   }
+
+  //
 }

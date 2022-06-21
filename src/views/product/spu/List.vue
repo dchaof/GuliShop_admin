@@ -31,7 +31,7 @@
             label="操作"
             width="width">
             <template slot-scope="{row,$index}">
-              <HintButton  type="success" icon="el-icon-plus" size="mini" title="添加SKU" @click="showAddSkuForm"></HintButton>
+              <HintButton  type="success" icon="el-icon-plus" size="mini" title="添加SKU" @click="showAddSkuForm(row,category1Id,category2Id)"></HintButton>
               <HintButton  type="warning" icon="el-icon-edit" size="mini"  title="修改SPU" @click="showUpdateSpuForm(row)"></HintButton>
               <HintButton  type="info" icon="el-icon-info" size="mini" title="查看SKU列表"></HintButton>
 
@@ -57,7 +57,7 @@
           :total="total">
         </el-pagination>
       </div>
-      <skuForm v-show="isShowSkuList"></skuForm>
+      <skuForm v-show="isShowSkuList" :visible.sync="isShowSkuList" ref="sku"></skuForm>
       <!-- visible父子数据同步 -->
       <!-- <spuForm v-show="isShowSpuList" ref="spu" :visible.sync="isShowSpuList" ></spuForm> -->
 
@@ -132,8 +132,10 @@ export default {
       this.isShowSpuList = true
       this.$refs.spu.initUpdateSpuFormData(row)
     },
-    showAddSkuForm(){
+    showAddSkuForm(row,category1Id,category2Id){
+      
       this.isShowSkuList = true
+      this.$refs.sku.initAddSkuFormData(row,category1Id,category2Id)
     },
     successBack(){
       if(this.flag){

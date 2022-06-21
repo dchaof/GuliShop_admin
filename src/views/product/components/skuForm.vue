@@ -14,18 +14,18 @@
         <el-input v-model="skuForm.skuName" placeholder="SKU 规格描述" type="textarea" rows="4"></el-input> 
       </el-form-item>
       <el-form-item label="平台属性">
-        <el-form label-width="100px" inline="true">
+        <el-form label-width="100px" :inline="true">
           <el-form-item label="屏幕尺寸">
-            <el-select  placeholder="请选择">
+            <el-select  placeholder="请选择" v-model="model">
               <el-option label="label" value="value"></el-option>
             </el-select>
           </el-form-item>
         </el-form> 
       </el-form-item>
       <el-form-item label="销售属性">
-        <el-form label-width="100px" inline="true">
+        <el-form label-width="100px" :inline="true">
           <el-form-item label="颜色">
-            <el-select  placeholder="请选择">
+            <el-select  placeholder="请选择" v-model="model">
               <el-option label="label" value="value"></el-option>
             </el-select>
           </el-form-item>
@@ -60,7 +60,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary">保存</el-button>
-        <el-button >取消</el-button>
+        <el-button @click="$emit('update:visible',false)">取消</el-button>
       </el-form-item>
     </el-form>
 </template>
@@ -85,7 +85,32 @@ export default {
 			  skuAttrValueList: [], // sku的属性值列表
 			  skuSaleAttrValueList: [], // sku属性属性值列表
 			  skuImageList: [], // 选择的spu图片列表
-			}
+			},
+      spu:{},
+      attrList:[],
+      spuSaleAttrList:[],
+      spuImageList:[],
+      model:''
+    }
+  },
+  methods:{
+    async initAddSkuFormData(row,category1Id,category2Id){
+
+      //根据选中的三级分类列表 获取平台属性列表
+      //http://localhost:9529/dev-api/admin/product/attrInfoList/2/13/61
+      let promise1 = this.$API.sku.getAttrList(category1Id,category2Id,row.category3Id)
+      //获取spu销售属性列表
+      //http://localhost:9529/dev-api/admin/product/spuSaleAttrList/6
+      let promise2 = this.$API.sku.getSpuSaleAttrList(row.id)
+      //获取spu图片列表
+      //http://localhost:9529/dev-api/admin/product/spuImageList/6
+      let promise3 = this.$API.sku.getSpuImageList(row.id)
+
+      let result = await Promise.all([promise1,promise2,promise3])
+
+      this.attrList = result[0].data
+      this.spuSaleAttrList = result[1].data
+      this.spuImageList = result[2].data
     }
   }
 }
