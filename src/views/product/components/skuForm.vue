@@ -1,6 +1,6 @@
 <template>
   <el-form v-model="skuForm" label-width="100px">
-      <el-form-item label="SPU 名称">spuname</el-form-item>
+      <el-form-item label="SPU 名称">{{spu.spuName}}</el-form-item>
       <el-form-item label="SKU 名称">
         <el-input v-model="skuForm.skuName" placeholder="SKU 名称"></el-input>
       </el-form-item>
@@ -15,18 +15,18 @@
       </el-form-item>
       <el-form-item label="平台属性">
         <el-form label-width="100px" :inline="true">
-          <el-form-item label="屏幕尺寸">
+          <el-form-item :label="attr.attrName" v-for="attr in attrList" :key="attr.id">
             <el-select  placeholder="请选择" v-model="model">
-              <el-option label="label" value="value"></el-option>
+              <el-option :label="attrValue.valueName" value="value" v-for="attrValue in attr.attrValueList" :key="attrValue.id"></el-option>
             </el-select>
           </el-form-item>
         </el-form> 
       </el-form-item>
       <el-form-item label="销售属性">
         <el-form label-width="100px" :inline="true">
-          <el-form-item label="颜色">
+          <el-form-item :label="spuSaleAttr.saleAttrName" v-for="spuSaleAttr in spuSaleAttrList" :key="spuSaleAttr.id">
             <el-select  placeholder="请选择" v-model="model">
-              <el-option label="label" value="value"></el-option>
+              <el-option :label="spuSaleAttrValue.saleAttrValueName" value="value" v-for="spuSaleAttrValue in spuSaleAttr.spuSaleAttrValueList" :key="spuSaleAttrValue.id"></el-option>
             </el-select>
           </el-form-item>
         </el-form> 
@@ -95,7 +95,7 @@ export default {
   },
   methods:{
     async initAddSkuFormData(row,category1Id,category2Id){
-
+      this.spu = row
       //根据选中的三级分类列表 获取平台属性列表
       //http://localhost:9529/dev-api/admin/product/attrInfoList/2/13/61
       let promise1 = this.$API.sku.getAttrList(category1Id,category2Id,row.category3Id)
