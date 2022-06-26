@@ -33,8 +33,10 @@
       </el-form-item>
       <el-form-item label="图片列表">
         <el-table
+          :data="spuImageList"
           border
-          style="width: 100%">
+          style="width: 100%"
+          >
           <el-table-column
             type="selection"
             prop="prop"
@@ -44,16 +46,22 @@
             label="图片"
             prop="prop"
             width="width">
+            <template slot-scope="{row,$index}">
+              <img :src="row.imgUrl" alt="" style="width:80px;height:100px;">
+            </template>
           </el-table-column>
           <el-table-column
             label="名称"
-            prop="prop"
+            prop="imgName"
             width="width">
           </el-table-column>
           <el-table-column
             label="操作"
             prop="prop"
             width="width">
+            <template slot-scope="{row,$index}">
+              <el-button type="primary" size="mini">设为默认</el-button>
+            </template>
           </el-table-column>
         </el-table>
         
