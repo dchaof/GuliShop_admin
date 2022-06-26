@@ -16,8 +16,8 @@
       <el-form-item label="平台属性">
         <el-form label-width="100px" :inline="true">
           <el-form-item :label="attr.attrName" v-for="attr in attrList" :key="attr.id">
-            <el-select  placeholder="请选择" v-model="model">
-              <el-option :label="attrValue.valueName" value="value" v-for="attrValue in attr.attrValueList" :key="attrValue.id"></el-option>
+            <el-select  placeholder="请选择" v-model="attr.attrIdValueId" >
+              <el-option :label="attrValue.valueName" :value="`${attr.id}:${attrValue.id}`" v-for="attrValue in attr.attrValueList" :key="attrValue.id"></el-option>
             </el-select>
           </el-form-item>
         </el-form> 
@@ -25,8 +25,8 @@
       <el-form-item label="销售属性">
         <el-form label-width="100px" :inline="true">
           <el-form-item :label="spuSaleAttr.saleAttrName" v-for="spuSaleAttr in spuSaleAttrList" :key="spuSaleAttr.id">
-            <el-select  placeholder="请选择" v-model="model">
-              <el-option :label="spuSaleAttrValue.saleAttrValueName" value="value" v-for="spuSaleAttrValue in spuSaleAttr.spuSaleAttrValueList" :key="spuSaleAttrValue.id"></el-option>
+            <el-select  placeholder="请选择" v-model="spuSaleAttr.attrIdValueId">
+              <el-option :label="spuSaleAttrValue.saleAttrValueName" :value="`${spuSaleAttr.id}:${spuSaleAttrValue.id}`" v-for="spuSaleAttrValue in spuSaleAttr.spuSaleAttrValueList" :key="spuSaleAttrValue.id"></el-option>
             </el-select>
           </el-form-item>
         </el-form> 
@@ -36,11 +36,13 @@
           :data="spuImageList"
           border
           style="width: 100%"
+          @selection-change="handleSelectionChange"
           >
           <el-table-column
             type="selection"
             prop="prop"
-            width="55">
+            width="55"
+            >
           </el-table-column>
           <el-table-column
             label="图片"
@@ -60,7 +62,8 @@
             prop="prop"
             width="width">
             <template slot-scope="{row,$index}">
-              <el-button type="primary" size="mini">设为默认</el-button>
+              <el-button v-if="row.isDefault === '0'" type="primary" size="mini" @click="setDefault(row)" >设为默认</el-button>
+              <el-tag v-else type="success">默认</el-tag>
             </template>
           </el-table-column>
         </el-table>
@@ -98,7 +101,8 @@ export default {
       attrList:[],
       spuSaleAttrList:[],
       spuImageList:[],
-      model:''
+      model:'',
+      checkedImageList:[],
     }
   },
   methods:{
@@ -118,7 +122,22 @@ export default {
 
       this.attrList = result[0].data
       this.spuSaleAttrList = result[1].data
-      this.spuImageList = result[2].data
+      let spuImageList = result[2].data
+
+      //为了实现图片默认功能，添加了ischecked的属性
+      spuImageList.forEach(item => item.isDefault = '0')
+      this.spuImageList = spuImageList
+    },
+    handleSelectionChange(val) {
+      // console.log(val)
+      this.checkedImageList = val
+    },
+    //设置默认
+    setDefault(row){
+      //排他
+      this.spuImageList.forEach(item => item.isDefault = '0')
+      row.isDefault = 1
+      this.skuForm.skuDefaultImg = row.imgUrl
     }
   }
 }
