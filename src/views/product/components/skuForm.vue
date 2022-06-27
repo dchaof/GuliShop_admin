@@ -71,7 +71,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="save">保存</el-button>
-        <el-button @click="$emit('update:visible',false)">取消</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
 </template>
@@ -184,11 +184,48 @@ export default {
       })
 
       //发送请求
-      await this.$API.sku.addUpdate(this.skuForm)
-      this.$message.success('保存成功')
+      try {
+        await this.$API.sku.addUpdate(this.skuForm)
+        this.$message.success('保存成功')
+        //返回到spu列表页
+        this.$emit('update:visible',false)
+        //重置data数据
+        this.resetData()
+      } catch (error) {
+        this.$message.info('保存失败')
+      }
 
       
-    }
+    },
+    resetData(){
+      this.skuForm = {
+        // 下面3个数据从父组件传入收集
+			  category3Id: null, // 3级分类ID
+			  spuId: null, // SPU的id
+        tmId: null, // 品牌ID
+        // 下面4个通过v-model收集
+			  skuName: null, // sku的名称
+			  skuDesc: null, // sku的描述
+			  price: null, // sku的价格
+        weight: null, // sku的重量
+        
+			  skuDefaultImg: null, // sku的默认图片  
+			  skuAttrValueList: [], // sku的属性值列表
+			  skuSaleAttrValueList: [], // sku属性属性值列表
+			  skuImageList: [], // 选择的spu图片列表
+			}
+      this.spu = {}
+      this.attrList = []
+      this.spuSaleAttrList = []
+      this.spuImageList = []
+      this.checkedImageList = []
+    },
+    cancel(){
+      //返回到spu列表页
+      this.$emit('update:visible',false)
+      //重置data数据
+      this.resetData()
+    },
   }
 }
 </script>

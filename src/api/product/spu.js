@@ -69,7 +69,11 @@ export default {
   //获取所有品牌列表数据
   getTrademarkList(){
     return request.get('/admin/product/baseTrademark/getTrademarkList')
-  }
+  },
 
+  //获取sku列表数据
+  reqSkuList(spuId){
+    return request.get(`/admin/product/findBySpuId/${spuId}`)
+  }
 
 }
