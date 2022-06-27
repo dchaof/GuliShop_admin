@@ -5,13 +5,13 @@
         <el-input v-model="skuForm.skuName" placeholder="SKU 名称"></el-input>
       </el-form-item>
       <el-form-item label="价格(元)">
-        <el-input v-model="skuForm.price" placeholder="SKU 价格"></el-input>
+        <el-input v-model="skuForm.price" placeholder="SKU 价格" type="number"></el-input>
       </el-form-item>
       <el-form-item label="重量(千克)">
-        <el-input v-model="skuForm.skuName" placeholder="SKU 重量"></el-input>
+        <el-input v-model="skuForm.weight" placeholder="SKU 重量" type="number"></el-input>
       </el-form-item>
       <el-form-item label="规格描述">
-        <el-input v-model="skuForm.skuName" placeholder="SKU 规格描述" type="textarea" rows="4"></el-input> 
+        <el-input v-model="skuForm.skuDesc" placeholder="SKU 规格描述" type="textarea" rows="4"></el-input> 
       </el-form-item>
       <el-form-item label="平台属性">
         <el-form label-width="100px" :inline="true">
@@ -70,7 +70,7 @@
         
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="save">保存</el-button>
         <el-button @click="$emit('update:visible',false)">取消</el-button>
       </el-form-item>
     </el-form>
@@ -101,7 +101,6 @@ export default {
       attrList:[],
       spuSaleAttrList:[],
       spuImageList:[],
-      model:'',
       checkedImageList:[],
     }
   },
@@ -138,6 +137,57 @@ export default {
       this.spuImageList.forEach(item => item.isDefault = '0')
       row.isDefault = 1
       this.skuForm.skuDefaultImg = row.imgUrl
+    },
+    //保存
+    async save(){
+      let {spu,skuForm,attrList,spuSaleAttrList,checkedImageList} = this
+      //整理父组件传过来的
+      skuForm.tmId = spu.tmId
+      skuForm.category3Id = spu.category3Id
+      skuForm.spuId = spu.id
+      
+
+      skuForm.skuAttrValueList = attrList.reduce((prev,item) => {
+        if(item.attrIdValueId){
+          let [attrId,valueId] = item.attrIdValueId.split(':')
+          let obj = {
+            attrId,
+            valueId
+          }
+          prev.push(obj)
+        }
+        return prev
+      },[])
+
+      skuForm.skuSaleAttrValueList = spuSaleAttrList.reduce((prev,item) => {
+        if(item.attrIdValueId){
+          let [saleAttrId,saleAttrValueId] = item.attrIdValueId.split(':')
+          let obj = {
+            saleAttrId,
+            saleAttrValueId
+          }
+          prev.push(obj)
+        }
+        return prev
+      },[])
+
+      
+
+
+      skuForm.skuImageList = checkedImageList.map(item => {
+        return {
+          imgName:item.imgName,
+          imgUrl:item.imgUrl,
+          spuImgId:item.id,
+          isDefault:item.isDefault
+        }
+      })
+
+      //发送请求
+      await this.$API.sku.addUpdate(this.skuForm)
+      this.$message.success('保存成功')
+
+      
     }
   }
 }
